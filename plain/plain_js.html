@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Alex Marginet's exercise with love</title>
+	<style type="text/css">
+		body {
+			font: 1em/150% Arial, Helvetica, sans-serif;
+		}
+		a {
+			color: #669;
+			text-decoration: none;
+		}
+		a:hover {
+			text-decoration: underline;
+		}
+		p {
+			margin:3px;
+		}
+		#content p {
+			margin-top:0px;
+			margin-bottom:0px;
+		}
+		h1 {
+			font: bold 36px/100% Arial, Helvetica, sans-serif;
+		}
+
+		/* Default structure */
+		#pagewrap {
+			width: 100%;
+			
+		}
+		#header {
+			padding:5px;
+			text-align:center;
+		}
+		#content {
+			padding:5px;
+			background: #f8f8f8;
+			border: solid 1px #ccc;
+			text-align:center;
+		}
+		.row {
+			display: block;
+		}
+		.row:after {
+			clear: both;
+  			display: table;
+  			content: " ";
+		}
+		.quarter {
+			position: relative;
+  			min-height: 1px;
+			float:left;
+			width: 25%;
+		}
+		.daycolumn {
+			position: relative;
+  			min-height: 1px;
+			float:left;
+			width: 16%;
+			text-align:center;
+		}
+		.forecast_element {
+			margin: 2em auto;
+		}
+		#footer {
+			clear: both;
+			padding:5px;
+			text-align:center;
+		}
+		p.datetime{
+			font-size: 70%;
+		}
+
+		/* Responsive stuff */
+		/* example of what we could do for small widths */
+		@media screen and (max-width: 720px) {
+			.quarter {
+				width:50%;
+			}
+			.daycolumn {
+				width:33%;
+			}
+		}
+		@media screen and (max-width: 480px) {
+			#header {
+				height: auto;
+			}
+			h1 {
+				font-size: 24px;
+			}
+			h2 {
+				font-size: 75%;
+			}
+			.quarter {
+				width:100%;
+			}
+			.daycolumn {
+				width:50%;
+			}
+		}
+	</style>
+	<script>
+		var api_url = "http://api.openweathermap.org/data/2.5/forecast";
+		var api_id  = "def2c113705d20838f719c331c051afb";
+		var month = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Avg", "Sen", "Oct", "Nov", "Dec"];
+		
+		function getData(path, callback) {
+			var httpRequest = new XMLHttpRequest();
+			httpRequest.onreadystatechange = function() {
+				if (httpRequest.readyState === 4) {
+					if (httpRequest.status === 200) {
+						var data = JSON.parse(httpRequest.responseText);
+						if (callback) { callback(data); }
+					}
+					else {
+						callback({error: "Connection error"});
+					}
+				}
+			};
+			httpRequest.open('GET', path);
+			httpRequest.send(); 
+		}
+
+		function refresh() {
+			var city=document.getElementById("city").value;
+			var units=document.getElementById("units").value;
+			var lang=document.getElementById("language").value;
+			var dom_element=document.getElementById("content");
+			var unitsDescription=getTempUnitsDescr(units);
+			if(dom_element)
+				dom_element.innerHTML="<h1>Executing your query...</h1>";
+			getData(api_url + '?q='+city+'&units='+units+'&lang='+lang+'&mode=json&appid=' + api_id, function(data){
+				if(!dom_element)
+					return;
+				dom_element.innerHTML="";
+				if(data){
+					if(data.error){
+						dom_element.innerHTML="<h1>"+data.error+"</h1>";
+						return;
+					}
+					if(data.city){ 
+						dom_element.innerHTML += "<h2>"+data.city.name+" ("+data.city.country+")<h2>";
+					}
+					var dayIndex=-1;
+					var days=[];
+					var currentDay="";
+					if(data.list){
+						for(var i=0;i<data.list.length;i++) {
+							var dt=new Date(data.list[i].dt * 1000);  //we should work better with timezones
+							var day =dt.getDate() +' '+ month[dt.getMonth()];	
+  							if(day!=currentDay){
+  								dayIndex=day;
+  								days[dayIndex]="<h3>"+day+"</h3>";
+  							}
+  							currentDay=day;
+  							var h = ("0"+dt.getHours()).slice(-2);
+    						var m = ("0"+dt.getMinutes()).slice(-2);
+  							
+  							days[dayIndex]+='<div class="forecast_element">';
+  							if(data.list[i].weather && data.list[i].weather.length)
+  								days[dayIndex] += '		<img src="http://openweathermap.org/img/w/'+data.list[i].weather[0].icon+'.png" />';
+  							if(data.list[i].weather && data.list[i].weather.length)
+  								days[dayIndex] += '		<p>'+data.list[i].weather[0].description+'</p>';
+  							days[dayIndex] += '		<p class="datetime">'+h+':'+m+'</p>';
+  							if(data.list[i].main){
+  								temp=Math.round(10*data.list[i].main.temp)/10;
+  								days[dayIndex] += '		<p>'+temp+' '+unitsDescription+'</p>';
+  							}
+  							days[dayIndex]+='</div>';
+  							
+  							
+  						}
+  						domInject="";
+  						for(var day in days) {
+  							domInject += '	<div class="daycolumn">' + days[day] + '<hr/></div>';
+  						}
+  						dom_element.innerHTML += '<div class="row">'+domInject+"</div>";
+					}
+				}
+			});
+		}
+		function getTempUnitsDescr(units){
+			if(units=="imperial")
+				return "°F";
+			return "°C";
+		}
+		
+		document.addEventListener("DOMContentLoaded", function(event) { 
+			var dom_button=document.getElementById("execute");
+			if(dom_button) {
+				dom_button.addEventListener('click', function() {
+					refresh();
+				}, false);
+			}
+			refresh();
+		});
+	</script>
+</head>
+
+<body>
+	<div id="pagewrap">
+
+		<div id="header">
+			<h1>Weather forecast</h1>
+			<p>Exercise version 1: pure HTML+CSS+JS </p>
+			
+			<div class="row">
+				<div class="quarter">City: <input type="text" id="city" value="London"/></div>
+				<div class="quarter">Units: <select id="units"><option value="imperial">Imperial</option><option value="metric">Metric</option></select></div>
+				<div class="quarter">Language: <select id="language"><option value="en">English</option><option value="ru">русский</option><option value="it">Italiano</option><option value="es">Español</option></select></div>
+				<div class="quarter"><input type="button" value="Execute" id="execute"/></div>
+			</div>
+		</div>
+
+		<div id="content">
+		</div>
+	
+		<div id="footer">
+			<h4>Made by Alex Marginet with love for Wipro Digital</h4>
+		</div>
+
+	</div>
+</body>
+</html>

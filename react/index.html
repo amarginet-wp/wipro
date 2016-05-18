@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Alex Marginet's exercises</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+  </head>
+  <body>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Weather forecast</a>
+    </div>
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      	<ul class="nav navbar-nav">
+        	<form class="navbar-form navbar-left" role="search">
+        		<div class="form-group">
+          			<input type="text" class="form-control" placeholder="Search">
+        		</div>
+        		<button type="submit" class="btn btn-default">Add new city</button>
+      		</form>
+        	<li class="dropdown">
+          		<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Units <span class="caret"></span></a>
+          		<ul class="dropdown-menu">
+            		<li><a href="#">Imperial</a></li>
+            		<li><a href="#">Metric</a></li>
+          		</ul>
+        	</li>
+        	<li class="dropdown">
+          		<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Language <span class="caret"></span></a>
+          		<ul class="dropdown-menu">
+            		<li><a href="#">English</a></li>
+            		<li><a href="#">Español</a></li>
+            		<li><a href="#">русский</a></li>
+            		<li><a href="#">Italiano</a></li>
+            		<li><a href="#">Français</a></li>
+            	</ul>
+        	</li>
+    	</ul>
+    </div>
+  </div>
+</nav>
+  	<div class="container">
+  		<div class="jumbotron">
+  			<h1>Weather forecast</h1>
+  			<h2>Exercise version 2: React + Bootstrap</h2>
+  			<p>By Alex Marginet with love for Wipro!</p>
+		</div>
+	</div>
+    <div id="cityist" class="container"></div>
+    <script src="bundle.js"></script>
+  </body>
+</html>
